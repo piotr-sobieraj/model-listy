@@ -1,6 +1,3 @@
-del element, lista
-
-
 class element:
     def __init__(self, pDane, pNastepny=None):
         self.dane = pDane
@@ -36,31 +33,90 @@ class lista:
         return lista_wyj    
     
     
+    def __len__(self):
+        return self.dlugosc
+    
+    
     def szukaj(self, pElement):
-        tmp_nastepny = self.glowa
+        tmp_adres = self.glowa
                 
-        while tmp_nastepny is not None:
-            tmp_dane = tmp_nastepny.dane
+        while tmp_adres is not None:
+            tmp_dane = tmp_adres.dane
 
             if tmp_dane == pElement:
-                print (f'Znaleziono {pElement}!')
+#                 print (f'Znaleziono {pElement}!')
                 return True
                 
-            tmp_nastepny = tmp_nastepny.nastepny
+            tmp_adres = tmp_adres.nastepny
             
-        if tmp_nastepny is None:
-            print(f'Nie znaleziono {pElement} wśród elementów podanej listy.') 
+        if tmp_adres is None:
+#             print(f'Nie znaleziono {pElement} wśród elementów podanej listy.') 
             return False 
             
-    
-    def dolacz(self, pNowyElement):
-        nowy_element = element(pNowyElement)
+    @property
+    def dlugosc_iter(self):
+        temp_adres = self.glowa
+        licznik = 0
+                
+        if temp_adres is None:
+            return licznik
         
-        if self.glowa is None: #pusta lista
-            self.glowa = nowy_element
-            self.ogon = nowy_element
+        while temp_adres is not None:
+            licznik += 1
+            temp_adres = temp_adres.nastepny
+        
+        return licznik
+        
+        
+    
+    def dolacz(self, pElement):
+        n_element = element(pElement)
+        if self.glowa is None:
+            self.glowa = n_element
+            self.ogon = n_element
+            n_element.nastepny = None
         else:
-            self.ogon.nastepny = nowy_element
-            self.ogon = nowy_element
+            self.ogon.nastepny = n_element
+            self.ogon = n_element            
             
         self.dlugosc += 1
+        
+    
+    def daj_element_o_indeksie(self, pIndex):
+        licznik = 0
+        
+        tmp_adres = self.glowa
+        
+        while tmp_adres is not None:
+            if licznik == pIndex:
+                return tmp_adres.dane
+            licznik += 1
+            
+            tmp_adres = tmp_adres.nastepny
+        
+        raise Exception(f'Indeks {pIndex} poza zakresem!')
+        
+        
+print('Start testów...')
+test_lista = lista()
+assert len(test_lista) == 0
+
+test_lista.dolacz(1)
+assert len(test_lista) == 1
+
+test_lista.dolacz(2)
+assert len(test_lista) == 2
+
+test_lista.dolacz(3)
+assert len(test_lista) == 3
+assert test_lista.dlugosc_iter == 3
+
+assert test_lista.szukaj(10) == False
+assert test_lista.szukaj(1) == True
+assert test_lista.szukaj(2) == True
+assert test_lista.szukaj(3) == True
+
+assert test_lista.daj_element_o_indeksie(1) == 2
+
+
+print('Testy zakończone pomyślnie :)')
